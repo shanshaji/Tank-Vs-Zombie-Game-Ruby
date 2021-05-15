@@ -1,0 +1,7 @@
+#devid=myname
+#devtitle=My Name
+#gameid=mygame
+#gametitle=My Game
+#version=0.1
+#icon=metadata/icon.png
+#compile_ruby=false
