@@ -18,7 +18,8 @@ class Game
     player.future_player  ||= future_player_position 0, 0
     player.projectiles    ||= []
     player.damage         ||= 0
-    state.level           ||= create_level level_one_template
+    # state.level           ||= create_level level_one_template
+    state.level           ||= create_level(LevelGenerator.level_one_template)
   end
 
   def render
