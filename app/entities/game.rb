@@ -76,16 +76,23 @@ class Game
 
   def calc_enemies
     level.enemies.each do |e|
-      future_enemy = e.attack player
-      unless future_enemy.intersect_multiple_rect?(level.enemies + level.walls)
-        $gtk.notify! future_enemy
-        e.x = future_enemy.x
-        e.y = future_enemy.y
-      end
-    end
-    level.enemies.each do |e|
+      e.attack player
+      # future_enemy_position = e.attack player
+      # state.future ||= future_enemy
+      # $gtk.notify! future_enemy
+      # unless future_enemy.intersect_multiple_rect?(level.enemies + level.walls)
+      #   e.x = future_enemy.x
+      #   e.y = future_enemy.y
+      # end
+      # args.state.future_enemy_position = future_enemy_position
+      others = level.enemies + level.walls
+      e.x = e.future_position[:dx].x unless e.intersect_future_position?(others, :dx)
+      e.y = e.future_position[:dy].y unless e.intersect_future_position?(others, :dy)
       player.damage += 1 if e.intersect_rect? player
     end
+    # level.enemies.each do |e|
+    #   player.damage += 1 if e.intersect_rect? player
+    # end
   end
 
   def calc_spawn_locations
@@ -98,7 +105,8 @@ class Game
       s.countdown = s.rate
       # new_enemy = create_enemy s
       new_enemy = Enemy.new(x: s.x, y: s.y, hp: 2)
-      unless new_enemy.intersect_multiple_rect?(level.enemies)
+      future_enemy = FutureObject.new(new_enemy.x, new_enemy.y, new_enemy.w, new_enemy.h)
+      unless future_enemy.intersect_multiple_rect?(level.enemies)
         level.enemies << new_enemy
       end
     end

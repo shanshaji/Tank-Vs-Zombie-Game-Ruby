@@ -1,6 +1,6 @@
 class Player
 	attr_sprite
-	attr_accessor :attacked_at, :future_player, :projectiles, :damage, :angle, :x, :y
+	attr_accessor :attacked_at, :projectiles, :damage, :angle, :x, :y
 	def initialize
 		@x            = 640
 	    @y            = 360
@@ -9,14 +9,6 @@ class Player
 	    @attacked_at  = -1
 	    @angle        = 0
 	    @path = 'sprites/circle/green.png'
-	    @future_player= {
-	    	dx: 0, 
-	    	dy: 0,
-	    	both: {
-	    		x:0,
-	    		y:0
-	    	}
-	    }
 	    @projectiles  = []
 	    @damage       = 0
 	end

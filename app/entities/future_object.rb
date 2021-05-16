@@ -1,5 +1,6 @@
 class FutureObject
 	attr_sprite
+	# include CommonHelperMethods
 	def initialize(x, y, w, h)
 		@x = x
 		@y = y
@@ -8,6 +9,6 @@ class FutureObject
 	end
 
 	def intersect_multiple_rect?(others)
-		others.find { |o| (o != self) && (o.intersect_rect? self) }
+		others.find { |o| ( o != self) && (o.intersect_rect? self) }
 	end
 end

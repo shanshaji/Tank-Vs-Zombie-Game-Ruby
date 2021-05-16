@@ -18,5 +18,3 @@ class Level
 	  end
 	end
 end
-
-# .map { |s| to_cell(s.x, s.y).merge(s) }
