@@ -9,36 +9,20 @@ class Game
   end
 
   def defaults
-    player.x              ||= 640
-    player.y              ||= 360
-    player.w              ||= 16
-    player.h              ||= 16
-    player.attacked_at    ||= -1
-    player.angle          ||= 0
-    player.future_player  ||= future_player_position 0, 0
-    player.projectiles    ||= []
-    player.damage         ||= 0
+    state.player          ||= Player.new
     state.level           ||= Level.create_level
   end
 
   def render
-    outputs.sprites << level.walls.map do |w|
-      w.merge(path: 'sprites/square/gray.png')
-    end
-
-    outputs.sprites << level.spawn_locations.map do |s|
-      s.merge(path: 'sprites/square/blue.png')
-    end
-
-    outputs.sprites << player.projectiles.map do |p|
-      p.merge(path: 'sprites/square/blue.png')
-    end
+    outputs.sprites << level.walls
+    outputs.sprites << level.spawn_locations
+    outputs.sprites << player.projectiles
 
     outputs.sprites << level.enemies.map do |e|
       e.merge(path: 'sprites/square/red.png')
     end
 
-    outputs.sprites << player.merge(path: 'sprites/circle/green.png', angle: player.angle)
+    outputs.sprites << player
 
     outputs.labels << { x: 30, y: 30.from_top, text: "damage: #{player.damage || 0}" }
   end
@@ -58,20 +42,13 @@ class Game
   end
 
   def calc_player
-    if player.attacked_at == state.tick_count
-      player.projectiles << { at: state.tick_count,
-                              x: player.x,
-                              y: player.y,
-                              angle: player.angle,
-                              w: 4,
-                              h: 4 }.center_inside_rect(player)
-    end
-
+    player.animate(state.tick_count)
     if player.attacked_at.elapsed_time > 5
-      future_player = future_player_position inputs.left_right * 2, inputs.up_down * 2
-      future_player_collision = future_collision player, future_player, level.walls
-      player.x = future_player_collision.x if !future_player_collision.dx_collision
-      player.y = future_player_collision.y if !future_player_collision.dy_collision
+      future_player_new = player.future_player_position_new inputs.left_right * 2, inputs.up_down * 2
+      unless future_player_new.intersect_multiple_rect?(level.walls)
+        player.x = future_player_new.x
+        player.y = future_player_new.y
+      end
     end
   end
 
@@ -88,9 +65,8 @@ class Game
   end
 
   def calc_projectiles
-    player.projectiles.map! do |p|
-      dx, dy = p.angle.vector 10
-      p.merge(x: p.x + dx, y: p.y + dy)
+    player.projectiles.each do |projectile|
+      projectile.move
     end
 
     calc_projectile_collisions level.walls + level.enemies + level.spawn_locations
@@ -129,14 +105,17 @@ class Game
   end
 
   def calc_spawn_locations
-    level.spawn_locations.map! do |s|
-      s.merge(countdown: s.countdown - 1)
+    # level.spawn_locations.map! do |s|
+    #   s.merge(countdown: s.countdown - 1)
+    # end
+    level.spawn_locations.each do |s|
+      s.countdown -= 1
     end
     level.spawn_locations
          .find_all { |s| s.countdown.neg? }
          .each do |s|
       s.countdown = s.rate
-      s.merge(countdown: s.rate)
+      # s.merge(countdown: s.rate)
       new_enemy = create_enemy s
       if !(level.enemies.find { |e| e.intersect_rect? new_enemy })
         level.enemies << new_enemy
@@ -145,15 +124,16 @@ class Game
   end
 
   def create_enemy spawn_location
-    to_cell(spawn_location.ordinal_x, spawn_location.ordinal_y).merge hp: 2
+    {x: spawn_location.x, y: spawn_location.y, hp: 2, w: 16, h: 16}
   end
 
-  def player
-    state.player ||= {}
-  end
 
   def level
     state.level  ||= {}
+  end
+
+  def player
+    state.player ||={}
   end
 
   def future_collision entity, future_entity, others
@@ -174,9 +154,5 @@ class Game
       dy:   entity.merge(y: entity.y + dy),
       both: entity.merge(x: entity.x + dx, y: entity.y + dy)
     }
-  end
-
-  def future_player_position  dx, dy
-    future_entity_position dx, dy, player
   end
 end

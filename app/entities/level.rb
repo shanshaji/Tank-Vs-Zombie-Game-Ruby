@@ -11,10 +11,12 @@ class Level
   	def create_level
   		level_template = send("level_#{@@level}_template".to_sym)
 	    {
-	      walls:           level_template.walls.map { |w| to_cell(w.ordinal_x, w.ordinal_y).merge(w) },
+	      walls:           level_template.walls,
 	      enemies:         [],
-	      spawn_locations: level_template.spawn_locations.map { |s| to_cell(s.ordinal_x, s.ordinal_y).merge(s) }
+	      spawn_locations: level_template.spawn_locations
 	    }
 	  end
 	end
 end
+
+# .map { |s| to_cell(s.x, s.y).merge(s) }
