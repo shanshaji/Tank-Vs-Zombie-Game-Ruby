@@ -8,6 +8,6 @@ class FutureObject
 	end
 
 	def intersect_multiple_rect?(others)
-		others.find { |o| o.intersect_rect? self }
+		others.find { |o| (o != self) && (o.intersect_rect? self) }
 	end
 end

@@ -18,9 +18,7 @@ class Game
     outputs.sprites << level.spawn_locations
     outputs.sprites << player.projectiles
 
-    outputs.sprites << level.enemies.map do |e|
-      e.merge(path: 'sprites/square/red.png')
-    end
+    outputs.sprites << level.enemies
 
     outputs.sprites << player
 
@@ -77,37 +75,20 @@ class Game
   end
 
   def calc_enemies
-    level.enemies.map! do |e|
-      dx =  0
-      dx =  1 if e.x < player.x
-      dx = -1 if e.x > player.x
-      dy =  0
-      dy =  1 if e.y < player.y
-      dy = -1 if e.y > player.y
-      future_e           = future_entity_position dx, dy, e
-      future_e_collision = future_collision e, future_e, level.enemies + level.walls
-      e.next_x = e.x
-      e.next_y = e.y
-      e.next_x = future_e_collision.x if !future_e_collision.dx_collision
-      e.next_y = future_e_collision.y if !future_e_collision.dy_collision
-      e
+    level.enemies.each do |e|
+      future_enemy = e.attack player
+      unless future_enemy.intersect_multiple_rect?(level.enemies + level.walls)
+        $gtk.notify! future_enemy
+        e.x = future_enemy.x
+        e.y = future_enemy.y
+      end
     end
-
-    level.enemies.map! do |e|
-      e.x = e.next_x
-      e.y = e.next_y
-      e
-    end
-
     level.enemies.each do |e|
       player.damage += 1 if e.intersect_rect? player
     end
   end
 
   def calc_spawn_locations
-    # level.spawn_locations.map! do |s|
-    #   s.merge(countdown: s.countdown - 1)
-    # end
     level.spawn_locations.each do |s|
       s.countdown -= 1
     end
@@ -115,16 +96,16 @@ class Game
          .find_all { |s| s.countdown.neg? }
          .each do |s|
       s.countdown = s.rate
-      # s.merge(countdown: s.rate)
-      new_enemy = create_enemy s
-      if !(level.enemies.find { |e| e.intersect_rect? new_enemy })
+      # new_enemy = create_enemy s
+      new_enemy = Enemy.new(x: s.x, y: s.y, hp: 2)
+      unless new_enemy.intersect_multiple_rect?(level.enemies)
         level.enemies << new_enemy
       end
     end
   end
 
   def create_enemy spawn_location
-    {x: spawn_location.x, y: spawn_location.y, hp: 2, w: 16, h: 16}
+    Enemy.new(x: spawn_location.x, y: spawn_location.y, hp: 2)
   end
 
 
@@ -134,25 +115,5 @@ class Game
 
   def player
     state.player ||={}
-  end
-
-  def future_collision entity, future_entity, others
-    dx_collision = others.find { |o| o != entity && (o.intersect_rect? future_entity.dx) }
-    dy_collision = others.find { |o| o != entity && (o.intersect_rect? future_entity.dy) }
-
-    {
-      dx_collision: dx_collision,
-      x: future_entity.dx.x,
-      dy_collision: dy_collision,
-      y: future_entity.dy.y
-    }
-  end
-
-  def future_entity_position dx, dy, entity
-    {
-      dx:   entity.merge(x: entity.x + dx),
-      dy:   entity.merge(y: entity.y + dy),
-      both: entity.merge(x: entity.x + dx, y: entity.y + dy)
-    }
   end
 end
