@@ -15,6 +15,16 @@ class Projectile
 	def move
 	  dx, dy = @angle.vector 10
       @x += dx
-      @y += dy 
+      @y += dy
+	end
+
+	def calc_projectile_collisions entities
+	    entities.each do |e|
+	      e.damage ||= 0
+	      if !@collided && (intersect_rect? e)
+	      	@collided = true
+	      	e.damage += 1
+	      end
+    	end
 	end
 end

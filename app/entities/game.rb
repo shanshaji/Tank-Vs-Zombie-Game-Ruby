@@ -16,14 +16,6 @@ class Game
 
   def render
     outputs.sprites << state.sprites_to_render
-    # outputs.sprites << level.walls
-    # outputs.sprites << level.spawn_locations
-    # outputs.sprites << player.projectiles
-
-    # outputs.sprites << level.enemies
-
-    # outputs.sprites << player
-
     outputs.labels << { x: 30, y: 30.from_top, text: "damage: #{player.damage || 0}" }
   end
 
@@ -52,24 +44,12 @@ class Game
     end
   end
 
-  def calc_projectile_collisions entities
-    entities.each do |e|
-      e.damage ||= 0
-      player.projectiles.each do |p|
-        if !p.collided && (p.intersect_rect? e)
-          p.collided = true
-          e.damage  += 1
-        end
-      end
-    end
-  end
 
   def calc_projectiles
     player.projectiles.each do |projectile|
       projectile.move
+      projectile.calc_projectile_collisions level.walls + level.enemies + level.spawn_locations
     end
-
-    calc_projectile_collisions level.walls + level.enemies + level.spawn_locations
     player.projectiles.reject! { |p| p.at.elapsed_time > 10000 }
     player.projectiles.reject! { |p| p.collided }
     level.enemies.reject! { |e| e.damage > e.hp }
@@ -79,22 +59,11 @@ class Game
   def calc_enemies
     level.enemies.each do |e|
       e.attack player
-      # future_enemy_position = e.attack player
-      # state.future ||= future_enemy
-      # $gtk.notify! future_enemy
-      # unless future_enemy.intersect_multiple_rect?(level.enemies + level.walls)
-      #   e.x = future_enemy.x
-      #   e.y = future_enemy.y
-      # end
-      # args.state.future_enemy_position = future_enemy_position
       others = level.enemies + level.walls
       e.x = e.future_position[:dx].x unless e.intersect_future_position?(others, :dx)
       e.y = e.future_position[:dy].y unless e.intersect_future_position?(others, :dy)
       player.damage += 1 if e.intersect_rect? player
     end
-    # level.enemies.each do |e|
-    #   player.damage += 1 if e.intersect_rect? player
-    # end
   end
 
   def calc_spawn_locations
@@ -105,7 +74,6 @@ class Game
          .find_all { |s| s.countdown.neg? }
          .each do |s|
       s.countdown = s.rate
-      # new_enemy = create_enemy s
       new_enemy = Enemy.new(x: s.x, y: s.y, hp: 2)
       future_enemy = FutureObject.new(new_enemy.x, new_enemy.y, new_enemy.w, new_enemy.h)
       unless future_enemy.intersect_multiple_rect?(level.enemies)
