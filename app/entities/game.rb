@@ -9,18 +9,20 @@ class Game
   end
 
   def defaults
-    state.player          ||= Player.new
-    state.level           ||= Level.create_level
+    state.player           ||= Player.new
+    state.level            ||= Level.create_level
+    state.sprites_to_render||= [level.walls, level.spawn_locations, player.projectiles, level.enemies, player]  
   end
 
   def render
-    outputs.sprites << level.walls
-    outputs.sprites << level.spawn_locations
-    outputs.sprites << player.projectiles
+    outputs.sprites << state.sprites_to_render
+    # outputs.sprites << level.walls
+    # outputs.sprites << level.spawn_locations
+    # outputs.sprites << player.projectiles
 
-    outputs.sprites << level.enemies
+    # outputs.sprites << level.enemies
 
-    outputs.sprites << player
+    # outputs.sprites << player
 
     outputs.labels << { x: 30, y: 30.from_top, text: "damage: #{player.damage || 0}" }
   end
