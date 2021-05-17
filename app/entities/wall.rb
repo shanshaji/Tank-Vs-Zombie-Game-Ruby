@@ -10,4 +10,8 @@ class Wall
 		@path = 'sprites/square/gray.png'
 		@damage = 0
 	end
+
+	def attacked_by projectile
+		# @damage += 1
+	end
 end

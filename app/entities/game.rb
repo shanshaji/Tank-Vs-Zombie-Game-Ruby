@@ -50,10 +50,9 @@ class Game
       projectile.move
       projectile.calc_projectile_collisions level.walls + level.enemies + level.spawn_locations
     end
-    player.projectiles.reject! { |p| p.at.elapsed_time > 10000 }
-    player.projectiles.reject! { |p| p.collided }
-    level.enemies.reject! { |e| e.damage > e.hp }
-    level.spawn_locations.reject! { |s| s.damage > s.hp }
+    player.projectiles.delete_if { |p| p.is_not_active? }
+    level.enemies.delete_if { |enemy|  enemy.dead? }
+    level.spawn_locations.delete_if{ |spawn_location| spawn_location.destroyed? }
   end
 
   def calc_enemies
@@ -67,9 +66,7 @@ class Game
   end
 
   def calc_spawn_locations
-    level.spawn_locations.each do |s|
-      s.countdown -= 1
-    end
+    level.spawn_locations.each(&:start_countdown)
     level.spawn_locations
          .find_all { |s| s.countdown.neg? }
          .each do |s|
@@ -81,11 +78,6 @@ class Game
       end
     end
   end
-
-  def create_enemy spawn_location
-    Enemy.new(x: spawn_location.x, y: spawn_location.y, hp: 2)
-  end
-
 
   def level
     state.level  ||= {}

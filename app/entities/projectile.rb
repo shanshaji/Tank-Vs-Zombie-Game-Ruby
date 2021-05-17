@@ -18,12 +18,15 @@ class Projectile
       @y += dy
 	end
 
+	def is_not_active?
+		@collided || @at.elapsed_time > 10000
+	end
+
 	def calc_projectile_collisions entities
 	    entities.each do |e|
-	      e.damage ||= 0
 	      if !@collided && (intersect_rect? e)
 	      	@collided = true
-	      	e.damage += 1
+	      	e.attacked_by(self)
 	      end
     	end
 	end
