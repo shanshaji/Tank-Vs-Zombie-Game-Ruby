@@ -10,12 +10,20 @@ class Game
 
   def defaults
     state.player           ||= Player.new
-    state.level            ||= Level.create_level
-    state.sprites_to_render||= [level.walls, level.spawn_locations, player.projectiles, level.enemies, player]  
+    # state.width ||= (200 * 16)
+    # state.height ||= (200 * 16)
+    state.level            ||= Level.create_level(w:(200 * 16), h: (200*16))
+    state.sprites_to_render||= [level.walls, level.spawn_locations, player.projectiles, level.enemies, player]
   end
 
   def render
-    outputs.sprites << state.sprites_to_render
+    outputs[:camera].w = level.width
+    outputs[:camera].h = level.height
+    outputs[:camera].sprites << state.sprites_to_render
+    outputs.sprites << { x: camera_position.x,
+                        y: camera_position.y,
+                        w: outputs[:camera].w,
+                        h: outputs[:camera].h, path: :camera }
     outputs.labels << { x: 30, y: 30.from_top, text: "damage: #{player.damage || 0}" }
   end
 

@@ -7,6 +7,7 @@ require "app/entities/level.rb"
 require "app/entities/projectile.rb"
 require "app/entities/player.rb"
 require "app/entities/enemy.rb"
+require "app/entities/camera.rb"
 require "app/entities/game.rb"
 
 def tick args
