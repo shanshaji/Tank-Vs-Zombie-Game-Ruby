@@ -1,10 +1,9 @@
 class SpawnLocation
 	attr_sprite
-	include CommonHelperMethods
 	attr_accessor :rate, :countdown
-	def initialize(ordinal_x:, ordinal_y:, hp:, rate:, countdown:)
-		@x = to_cell(ordinal_x)
-		@y = to_cell(ordinal_y)
+	def initialize(x:, y:, hp:, rate:, countdown:)
+		@x = x
+		@y = y
 		@w = 16
 		@h = 16
 		@hp = hp

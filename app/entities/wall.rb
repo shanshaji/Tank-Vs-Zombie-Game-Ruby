@@ -1,10 +1,9 @@
 class Wall
 	attr_sprite
-	include CommonHelperMethods
 	attr_accessor :damage
-	def initialize(ordinal_x:, ordinal_y:, w: 16, h: 16)
-		@x = to_cell(ordinal_x)
-		@y = to_cell(ordinal_y)
+	def initialize(x:, y:, w: 16, h: 16)
+		@x = x
+		@y = y
 		@w = w
 		@h = h
 		@path = 'sprites/square/gray.png'

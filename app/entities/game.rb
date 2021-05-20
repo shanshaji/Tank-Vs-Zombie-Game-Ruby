@@ -9,21 +9,23 @@ class Game
   end
 
   def defaults
+    state.width ||= (100 * 16)
+    state.height ||= (100 * 16)
     state.player           ||= Player.new
-    # state.width ||= (200 * 16)
-    # state.height ||= (200 * 16)
-    state.level            ||= Level.create_level(w:(200 * 16), h: (200*16))
+    state.camera           ||= Camera.new(w:state.width, h: state.height , x: 0, y: 0)
+    state.level            ||= Level.create_level(w: state.width, h: state.height)
     state.sprites_to_render||= [level.walls, level.spawn_locations, player.projectiles, level.enemies, player]
   end
 
   def render
-    outputs[:camera].w = level.width
-    outputs[:camera].h = level.height
+    camera.camera_position(player)
+    outputs[:camera].w = camera.w
+    outputs[:camera].h = camera.h
     outputs[:camera].sprites << state.sprites_to_render
-    outputs.sprites << { x: camera_position.x,
-                        y: camera_position.y,
-                        w: outputs[:camera].w,
-                        h: outputs[:camera].h, path: :camera }
+    outputs.sprites << { x: camera.x,
+                        y: camera.y,
+                        w: camera.w,
+                        h: camera.h, path: camera.path}
     outputs.labels << { x: 30, y: 30.from_top, text: "damage: #{player.damage || 0}" }
   end
 
@@ -39,6 +41,20 @@ class Game
     calc_projectiles
     calc_enemies
     calc_spawn_locations
+    calc_level
+  end
+
+  def calc_level
+    if level.enemies.empty? && level.spawn_locations.empty?
+      outputs.labels << { x: 250, y: 290, text: "Press Enter to continue to Level: #{Level.level + 1}" }
+      # $gtk.notify! "next level"
+      # Level + 1
+      if inputs.keyboard.key_down.enter
+        Level + 1
+        state.level = Level.create_level(w: (80 * 16), h: (90 * 16))
+        state.sprites_to_render = [level.walls, level.spawn_locations, player.projectiles, level.enemies, player]
+      end
+    end
   end
 
   def calc_player
@@ -88,10 +104,14 @@ class Game
   end
 
   def level
-    state.level  ||= {}
+    state.level
   end
 
   def player
-    state.player ||={}
+    state.player
+  end
+
+  def camera
+    state.camera
   end
 end

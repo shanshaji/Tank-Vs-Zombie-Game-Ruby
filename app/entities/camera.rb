@@ -1,5 +1,5 @@
 class Camera
-	attr_sprite
+	attr_accessor :w, :h, :x, :y, :path
 	def initialize(w:, h:, x: 0, y: 0)
 		@x = x
 		@y = y
