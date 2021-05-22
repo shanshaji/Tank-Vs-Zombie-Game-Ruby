@@ -1,7 +1,8 @@
 class SpawnLocation
 	attr_sprite
-	attr_accessor :rate, :countdown
-	def initialize(x:, y:, hp:, rate:, countdown:)
+	attr_rect
+	attr_accessor :rate, :countdown, :enemy_hp, :enemy_power
+	def initialize(x:, y:, hp:, rate:, countdown:, enemy_power: 0.5, enemy_hp: 2)
 		@x = x
 		@y = y
 		@w = 16
@@ -9,7 +10,8 @@ class SpawnLocation
 		@hp = hp
 		@rate = rate
 		@countdown = countdown
-		@damage = 0
+		@enemy_hp = enemy_hp
+		@enemy_power = enemy_power
 		@path = 'sprites/square/blue.png'
 	end
 
@@ -19,10 +21,10 @@ class SpawnLocation
 	end
 
 	def destroyed?
-		@damage > @hp
+		@hp < 0
 	end
 
 	def attacked_by projectile
-		@damage += 1
+		@hp -= projectile.power
 	end
 end

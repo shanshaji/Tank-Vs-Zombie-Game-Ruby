@@ -13,20 +13,23 @@ class Game
     state.height ||= (100 * 16)
     state.player           ||= Player.new
     state.camera           ||= Camera.new(w:state.width, h: state.height , x: 0, y: 0)
-    state.level            ||= Level.create_level(w: state.width, h: state.height)
+    state.level            ||= create_level
     state.sprites_to_render||= [level.walls, level.spawn_locations, player.projectiles, level.enemies, player]
+    state.clouds   ||=  generate_clouds
   end
 
   def render
     camera.camera_position(player)
     outputs[:camera].w = camera.w
     outputs[:camera].h = camera.h
+    render_background
     outputs[:camera].sprites << state.sprites_to_render
+    outputs[:camera].static_sprites << state.clouds
     outputs.sprites << { x: camera.x,
                         y: camera.y,
                         w: camera.w,
                         h: camera.h, path: camera.path}
-    outputs.labels << { x: 30, y: 30.from_top, text: "damage: #{player.damage || 0}" }
+    outputs.labels << { x: 30, y: 30.from_top, text: "hp: #{player.hp || 0}" }
   end
 
   def input
@@ -37,6 +40,7 @@ class Game
   end
 
   def calc
+    calc_clouds
     calc_player
     calc_projectiles
     calc_enemies
@@ -44,14 +48,19 @@ class Game
     calc_level
   end
 
+  def calc_clouds
+    if args.state.tick_count % 900 == 0
+      state.clouds   <<  generate_clouds
+    end
+    state.clouds.flatten.delete_if{|cloud| cloud.outside?(state.width, state.height)}
+  end
+
   def calc_level
     if level.enemies.empty? && level.spawn_locations.empty?
       outputs.labels << { x: 250, y: 290, text: "Press Enter to continue to Level: #{Level.level + 1}" }
-      # $gtk.notify! "next level"
-      # Level + 1
       if inputs.keyboard.key_down.enter
         Level + 1
-        state.level = Level.create_level(w: (80 * 16), h: (90 * 16))
+        state.level = create_level
         state.sprites_to_render = [level.walls, level.spawn_locations, player.projectiles, level.enemies, player]
       end
     end
@@ -77,15 +86,13 @@ class Game
     player.projectiles.delete_if { |p| p.is_not_active? }
     level.enemies.delete_if { |enemy|  enemy.dead? }
     level.spawn_locations.delete_if{ |spawn_location| spawn_location.destroyed? }
+    level.walls.delete_if{ |wall| wall.destroyed? }
   end
 
   def calc_enemies
     level.enemies.each do |e|
-      e.attack player
       others = level.enemies + level.walls
-      e.x = e.future_position[:dx].x unless e.intersect_future_position?(others, :dx)
-      e.y = e.future_position[:dy].y unless e.intersect_future_position?(others, :dy)
-      player.damage += 1 if e.intersect_rect? player
+      e.attack player, others
     end
   end
 
@@ -95,12 +102,16 @@ class Game
          .find_all { |s| s.countdown.neg? }
          .each do |s|
       s.countdown = s.rate
-      new_enemy = Enemy.new(x: s.x, y: s.y, hp: 2)
+      new_enemy = Enemy.new(x: s.x, y: s.y, hp: s.enemy_hp, power: s.enemy_power)
       future_enemy = FutureObject.new(new_enemy.x, new_enemy.y, new_enemy.w, new_enemy.h)
       unless future_enemy.intersect_multiple_rect?(level.enemies)
         level.enemies << new_enemy
       end
     end
+  end
+
+  def create_level
+    Level.create_level(w: state.width, h: state.height)
   end
 
   def level

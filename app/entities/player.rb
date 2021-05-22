@@ -1,6 +1,6 @@
 class Player
 	attr_sprite
-	attr_accessor :attacked_at, :projectiles, :damage, :angle, :x, :y
+	attr_accessor :attacked_at, :projectiles, :angle, :hp, :x, :y
 	def initialize
 		@x            = 640
 	    @y            = 360
@@ -10,7 +10,7 @@ class Player
 	    @angle        = 0
 	    @path = 'sprites/circle/green.png'
 	    @projectiles  = []
-	    @damage       = 0
+	    @hp = 100
 	end
 
 	def animate tick_count

@@ -1,6 +1,6 @@
 class Projectile
 	attr_sprite
-	attr_accessor :at, :angle, :collided
+	attr_accessor :at, :angle, :collided, :power
 	def initialize(tick_count:, angle:, x:, y:)
 		@collided = false
 		@path = 'sprites/square/blue.png'
@@ -9,7 +9,8 @@ class Projectile
         @y = y
         @angle = angle
         @w= 4
-        @h= 4                     
+        @h= 4
+        @power = 2                 
 	end
 
 	def move
