@@ -19,8 +19,8 @@ end
 
 def generate_clouds
   10.map do
-    x = 0
-    y = (rand grid.h)
+    x = (rand grid.w) * -1
+    y = (rand grid.h) * -1
     Cloud.new(x: x, y: y)
   end
 end

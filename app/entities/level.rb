@@ -23,4 +23,13 @@ class Level
 	    }
 	  end
 	end
+
+	def method_missing(m, *args)
+	    method = m.to_s
+	    if method.start_with?("level_")             
+	        "You have beat the game"
+	    else
+	      super                                        
+	    end
+	end
 end
