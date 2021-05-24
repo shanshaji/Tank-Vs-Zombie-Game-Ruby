@@ -33,6 +33,7 @@ class Game
   end
 
   def input
+    # $gtk.notify! inputs.directional_angle
     player.angle = inputs.directional_angle || player.angle
     if inputs.controller_one.key_down.a || inputs.keyboard.key_down.space
       player.attacked_at = state.tick_count
@@ -49,7 +50,7 @@ class Game
   end
 
   def calc_clouds
-    if args.state.tick_count % 900 == 0
+    if state.tick_count % 900 == 0
       state.clouds   <<  generate_clouds
     end
     state.clouds.flatten.delete_if{|cloud| cloud.outside?(state.width, state.height)}
@@ -68,7 +69,7 @@ class Game
 
   def calc_player
     player.animate(state.tick_count)
-    if player.attacked_at.elapsed_time > 5
+    if player.move?
       player.future inputs.left_right * 2, inputs.up_down * 2
       unless player.future_object.intersect_multiple_rect?(level.walls)
         player.move_to_future_position

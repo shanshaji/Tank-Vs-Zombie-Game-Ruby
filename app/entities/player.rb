@@ -16,6 +16,10 @@ class Player < AnimatedSprite
 	    end
 	end
 
+	def move?
+		@attacked_at.elapsed_time > 5
+	end
+
 
   	def future dx, dy
     	new_x = @x + dx

@@ -1,7 +1,7 @@
 class Enemy < AnimatedSprite
 	attr_sprite
 	def initialize(x:, y:, hp: 2, w: 45, h: 45, power: 0.5, path: 'sprites/enemy/ogre/Running/0_Ogre_Running_000.png')
-		super(x: x, y: y, w: w, h: h, no_of_sprites: 6, path: path)
+		super(x: x, y: y, w: w, h: h, no_of_sprites: 11, path: path)
 		@hp = hp
 		@power = power
 	end
@@ -10,9 +10,7 @@ class Enemy < AnimatedSprite
 	def animate player, others
 	  look_at player
 	  move_towards player, others
-		#move
-
-      @path = running
+      running
       player.hp -= @power if intersect_rect? player
 	end
 
