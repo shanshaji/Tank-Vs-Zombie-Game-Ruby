@@ -1,44 +1,21 @@
-class Enemy
+class Enemy < AnimatedSprite
 	attr_sprite
-	attr_accessor :future_position
-	def initialize(x:, y:, hp: 2, w:16, h:16, power: 0.5)
-		@x = x
-		@y = y
-		@w = w
-		@h = h
-		@path = 'sprites/square/red.png'
+	def initialize(x:, y:, hp: 2, w: 45, h: 45, power: 0.5, path: 'sprites/enemy/ogre/Running/0_Ogre_Running_000.png')
+		super(x: x, y: y, w: w, h: h, no_of_sprites: 6, path: path)
 		@hp = hp
 		@power = power
-		@future_position = { dx: FutureObject.new(x, y, w, h), dy: FutureObject.new(x, y, w, h) }
 	end
 
 
-	def attack player, others
+	def animate player, others
+	  look_at player
+	  move_towards player, others
 		#move
-	  dx =  0
-      dx =  1 if @x < player.x
-      dx = -1 if @x > player.x
-      dy =  0
-      dy =  1 if @y < player.y
-      dy = -1 if @y > player.y
-      future_player_position_new dx, dy, others
+
+      @path = running
       player.hp -= @power if intersect_rect? player
 	end
 
-	def future_player_position_new dx, dy, others
-    	new_x = @x + dx
-	    new_y = @y + dy 
-	    @future_position[:dx].x = new_x
-	    @future_position[:dx].y = @y
-	    @future_position[:dy].x = @x
-	    @future_position[:dy].y = new_y
-	    @x = future_position[:dx].x unless intersect_future_position?(others, :dx)
-      	@y = future_position[:dy].y unless intersect_future_position?(others, :dy)
-  	end
-
-  	def intersect_future_position?(others, difference)
-		others.find { |o| (o.object_id != self.object_id) && (o.intersect_rect? @future_position[difference]) }
-	end
 
 	def attacked_by projectile
 		@hp -= projectile.power

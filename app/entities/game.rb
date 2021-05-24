@@ -12,7 +12,7 @@ class Game
     state.width ||= (100 * 16)
     state.height ||= (100 * 16)
     state.player           ||= Player.new
-    state.camera           ||= Camera.new(w:state.width, h: state.height , x: 0, y: 0)
+    state.camera           ||= Camera.new(w:state.width, h: state.height)
     state.level            ||= create_level
     state.sprites_to_render||= [level.walls, level.spawn_locations, player.projectiles, level.enemies, player]
     state.clouds   ||=  generate_clouds
@@ -90,9 +90,9 @@ class Game
   end
 
   def calc_enemies
-    level.enemies.each do |e|
+    level.enemies.each do |enemy|
       others = level.enemies + level.walls
-      e.attack player, others
+      enemy.animate player, others
     end
   end
 
@@ -103,8 +103,7 @@ class Game
          .each do |s|
       s.countdown = s.rate
       new_enemy = Enemy.new(x: s.x, y: s.y, hp: s.enemy_hp, power: s.enemy_power)
-      future_enemy = FutureObject.new(new_enemy.x, new_enemy.y, new_enemy.w, new_enemy.h)
-      unless future_enemy.intersect_multiple_rect?(level.enemies)
+      unless new_enemy.intersect_multiple_rect?(level.enemies)
         level.enemies << new_enemy
       end
     end
