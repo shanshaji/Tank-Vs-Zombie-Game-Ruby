@@ -1,11 +1,7 @@
-class Camera
+class Camera < Sprite
 	attr_accessor :w, :h, :x, :y, :path
 	def initialize(w:, h:, x: 0, y: 0)
-		@x = x
-		@y = y
-		@w = w
-		@h = h
-		@path = :camera
+		super(x: x, y: y, w: w, h: h, path: :camera)
 	end
 
 

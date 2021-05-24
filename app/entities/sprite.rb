@@ -1,10 +1,11 @@
 class Sprite
-
-	def initialize(x:, y:, w:, h:, flip_horizontally: false, flip_vertically: false)
+	attr_reader :future_object
+	def initialize(x:, y:, w:, h:, path:, flip_horizontally: false, flip_vertically: false)
 		@x = x
 		@y = y
 		@w = w
 		@h = h
+		@path = path
 		@flip_horizontally = false
         @flip_vertically = false
         @future_object = FutureObject.new(x, y, w, h, object_id)

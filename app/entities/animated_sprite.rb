@@ -1,7 +1,6 @@
 class AnimatedSprite < Sprite
   def initialize(x:,y:, w:, h:, path:, no_of_sprites: , start_looping_at: 0, number_of_frames_to_show_each_sprite: 4, does_sprite_loop: true)
-    super(x:x, y: y, w: w, h: h)
-    @path = path
+    super(x:x, y: y, w: w, h: h, path: path)
     @angle = 0
     @no_of_sprites = no_of_sprites
     @start_looping_at = start_looping_at

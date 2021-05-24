@@ -14,7 +14,7 @@ class Game
     state.player           ||= Player.new
     state.camera           ||= Camera.new(w:state.width, h: state.height)
     state.level            ||= create_level
-    state.sprites_to_render||= [level.walls, level.spawn_locations, player.projectiles, level.enemies, player]
+    state.sprites_to_render||= [level.spawn_locations, player.projectiles, level.enemies, player, level.walls]
     state.clouds   ||=  generate_clouds
   end
 
@@ -69,10 +69,9 @@ class Game
   def calc_player
     player.animate(state.tick_count)
     if player.attacked_at.elapsed_time > 5
-      future_player_new = player.future_player_position_new inputs.left_right * 2, inputs.up_down * 2
-      unless future_player_new.intersect_multiple_rect?(level.walls)
-        player.x = future_player_new.x
-        player.y = future_player_new.y
+      player.future inputs.left_right * 2, inputs.up_down * 2
+      unless player.future_object.intersect_multiple_rect?(level.walls)
+        player.move_to_future_position
       end
     end
   end

@@ -1,15 +1,12 @@
-class Projectile
+class Projectile < AnimatedSprite
 	attr_sprite
 	attr_accessor :at, :angle, :collided, :power
-	def initialize(tick_count:, angle:, x:, y:)
+	def initialize(tick_count:, angle:, x:, y:, w: 4, h: 4)
+		path = 'sprites/square/blue.png'
+		super(x: x, y: y, w: w, h: h, path: path, no_of_sprites: 0)
 		@collided = false
-		@path = 'sprites/square/blue.png'
 		@at = tick_count
-        @x = x
-        @y = y
         @angle = angle
-        @w= 4
-        @h= 4
         @power = 2                 
 	end
 

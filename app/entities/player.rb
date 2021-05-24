@@ -1,14 +1,11 @@
-class Player
+class Player < AnimatedSprite
 	attr_sprite
 	attr_accessor :attacked_at, :projectiles, :angle, :hp, :x, :y
-	def initialize
-		@x            = 640
-	    @y            = 360
-	    @w            = 16
-	    @h            = 16
+	def initialize(x: 640, y: 360, w: 16, h: 16)
+		path = 'sprites/circle/green.png'
+		super(x: x, y: y, w: w, h: h, path: path, no_of_sprites: 0)
 	    @attacked_at  = -1
 	    @angle        = 0
-	    @path = 'sprites/circle/green.png'
 	    @projectiles  = []
 	    @hp = 100
 	end
@@ -19,15 +16,16 @@ class Player
 	    end
 	end
 
-  	def future_player_position_new dx, dy
+
+  	def future dx, dy
     	new_x = @x + dx
 	    new_y = @y + dy 
-	    create_future_player(new_x, new_y)
+	    @future_object.x = new_x
+	    @future_object.y = new_y
   	end
 
-  	private
-
-  	def create_future_player(x, y)
-  		FutureObject.new(x, y, @w, @h)
+  	def move_to_future_position
+  		@x = @future_object.x
+        @y = @future_object.y
   	end
 end

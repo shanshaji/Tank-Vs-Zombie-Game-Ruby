@@ -1,6 +1,5 @@
 class FutureObject
 	attr_sprite
-	# include CommonHelperMethods
 	attr_reader :parent_id
 	def initialize(x, y, w, h, parent_id = nil)
 		@x = x

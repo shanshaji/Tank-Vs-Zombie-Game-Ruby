@@ -1,12 +1,9 @@
-class Cloud
+class Cloud < Sprite
 	attr_sprite
 	def initialize(x:, y:, w: 128, h: 101)
-		@x = x
-		@y = y
-		@w = w
-		@h = h
 		random_cloud = (1..4).to_a.sample
-		@path = "sprites/clouds/clouds_#{random_cloud}.png"
+		path = "sprites/clouds/clouds_#{random_cloud}.png"
+        super(x: x, y: y, w: w, h: h, path: path)
 		@s    = 0.1 + (0.5.randomize :ratio)
 	end
 

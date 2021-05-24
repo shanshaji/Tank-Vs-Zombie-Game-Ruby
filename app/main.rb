@@ -1,6 +1,5 @@
 require "app/helpers/common_helper_methods.rb"
 require "app/helpers/levels.rb"
-require "app/helpers/Star.rb"
 require "app/helpers/background.rb"
 require "app/constants/constants.rb"
 require "app/entities/sprite.rb"
