@@ -24,8 +24,3 @@ def generate_clouds
     Cloud.new(x: x, y: y)
   end
 end
-
-# def render_stars(args)
-#   args.state.stars = STAR_COUNT.map { |i| Star.new args.grid }
-#   args.outputs.static_sprites << args.state.stars
-# end

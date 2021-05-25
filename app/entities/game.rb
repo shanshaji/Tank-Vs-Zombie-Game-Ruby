@@ -8,22 +8,29 @@ class Game
     Level.create_level(w: @width, h: @height)
     @player = Player.new
     @camera = Camera.new(w:@width, h: @height)
-    # @clouds = generate_clouds
-    @sprites_to_render||= [Level.spawn_locations, player.projectiles, Level.enemies, player, Level.walls]
+    @sprites_to_render = [Level.spawn_locations, player.projectiles, Level.enemies, player, Level.walls]
   end
   def tick
     defaults
-    render
-    input
-    calc
+    if state.tick_count > 50
+      render
+      input
+      calc
+    else
+      render_loading_screen
+    end
     outputs.debug << args.gtk.framerate_diagnostics_primitives
+  end
+
+  def render_loading_screen
+    outputs.labels << { x: 640, y: 360.from_top, text: "Loading..." }
   end
 
   def defaults
     state.clouds   ||=  generate_clouds
   end
 
-  def render
+  def render 
     camera.camera_position(player)
     outputs[:camera].w = camera.w
     outputs[:camera].h = camera.h
@@ -62,12 +69,12 @@ class Game
   end
 
   def calc_level
-    if Level.enemies.empty? && Level.spawn_locations.empty?
+    if Level.completed?
       outputs.labels << { x: 250, y: 290, text: "Press Enter to continue to Level: #{Level.level + 1}" }
       if inputs.keyboard.key_down.enter
         Level + 1
         create_level
-        @sprites_to_render = [Level.walls, Level.spawn_locations, player.projectiles, Level.enemies, player]
+        @sprites_to_render = [Level.spawn_locations, player.projectiles, Level.enemies, player, Level.walls]
       end
     end
   end

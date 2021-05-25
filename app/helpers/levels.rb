@@ -12,18 +12,14 @@ module Levels
       spawn_locations << generate_spawn_locations(level, w, h, walls)
       @@walls = walls.flatten
       @@spawn_locations = spawn_locations.flatten
-      {
-        walls: walls.flatten,
-        spawn_locations: spawn_locations.flatten
-      } 
     end
   end
 
   def generate_walls level, w, h
     walls = []
-    rand_x = (MIN_ROOM_SIZE..MAX_ROOM_SIZE).to_a.sample
-    rand_y = (MIN_ROOM_SIZE..MAX_ROOM_SIZE).to_a.sample
     (1..(level * 10)).each do |num|
+      rand_x = (MIN_DISTANCE_FROM_BORDER..MAX_DISTANCE_FROM_BORDER).to_a.sample
+      rand_y = (MIN_DISTANCE_FROM_BORDER..MAX_DISTANCE_FROM_BORDER).to_a.sample
       boundsX = w - rand_x
       boundsY = h - rand_y
       x = (0..boundsX).to_a.sample
