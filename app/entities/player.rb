@@ -32,4 +32,12 @@ class Player < AnimatedSprite
   		@x = @future_object.x
         @y = @future_object.y
   	end
+
+  	def calc_projectiles
+  		@projectiles.each do |projectile|
+	      projectile.move
+	      projectile.calc_projectile_collisions Level.walls + Level.enemies + Level.spawn_locations
+	    end
+	    @projectiles.delete_if { |p| p.is_not_active? }
+	end
 end
