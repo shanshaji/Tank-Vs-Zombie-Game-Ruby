@@ -33,8 +33,8 @@ class Level
 	         .find_all { |s| s.countdown.neg? }
 	         .each do |s|
 	      s.countdown = s.rate
-	      new_enemy = Enemy.new(x: s.x, y: s.y, hp: s.enemy_hp, power: s.enemy_power)
-	      unless new_enemy.intersect_multiple_rect?(Level.enemies)
+	      new_enemy = Enemy.new(x: s.x, y: s.y, hp: s.enemy_hp, power: s.enemy_power, speed: s.enemy_speed)
+	      unless new_enemy.intersect_multiple_rect?(@@enemies)
 	        @@enemies << new_enemy
 	      end
 	    end

@@ -8,7 +8,7 @@ class Game
     Level.create_level(w: @width, h: @height)
     @player = Player.new
     @camera = Camera.new(w:@width, h: @height)
-    @sprites_to_render = [Level.spawn_locations, player.projectiles, Level.enemies, player, Level.walls]
+    @sprites_to_render = [Level.spawn_locations, player.projectiles, player, Level.enemies, Level.walls]
   end
   def tick
     defaults
@@ -74,7 +74,7 @@ class Game
       if inputs.keyboard.key_down.enter
         Level + 1
         create_level
-        @sprites_to_render = [Level.spawn_locations, player.projectiles, Level.enemies, player, Level.walls]
+        @sprites_to_render = [Level.spawn_locations, player.projectiles, player, Level.enemies, Level.walls]
       end
     end
   end
@@ -82,8 +82,8 @@ class Game
   def calc_player
     player.animate(state.tick_count)
     if player.move?
-      player.future inputs.left_right * 2, inputs.up_down * 2
-      unless player.future_object.intersect_multiple_rect?(Level.walls)
+      player.future inputs.left_right * player.speed, inputs.up_down * player.speed
+      unless player.future_object.intersect_multiple_rect?(Level.walls + Level.spawn_locations)
         player.move_to_future_position
       end
     end

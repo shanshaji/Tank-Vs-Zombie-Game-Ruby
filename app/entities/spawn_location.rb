@@ -1,32 +1,26 @@
 class SpawnLocation < AnimatedSprite
 	attr_sprite
+	attr_accessor :rate, :countdown, :enemy_hp, :enemy_power, :cumulative_power, :enemy_speed
 
-	class << self
-		def start spawn_locations
-			spawn_locations.each(&:start_countdown)
-		    spawn_locations
-		         .find_all { |s| s.countdown.neg? }
-		         .each do |s|
-		      s.countdown = s.rate
-		      new_enemy = Enemy.new(x: s.x, y: s.y, hp: s.enemy_hp, power: s.enemy_power)
-		      unless new_enemy.intersect_multiple_rect?(level.enemies)
-		        level.enemies << new_enemy
-		      end
-		    end
-		end
-	end
-	attr_accessor :rate, :countdown, :enemy_hp, :enemy_power
-	def initialize(x:, y:, w: 80, h: 80, hp:, rate:, countdown:, enemy_power: 0.5, enemy_hp: 2)
-		path = 'sprites/cave/door2.png'
+
+	MAX_RATE = 300
+	MIN_RATE = 100
+	MIN_COUNTDOWN = 0
+	MAX_COUNTDOWN = 5
+	MIN_HEALTH = 5
+	MAX_HEALTH = 20
+
+	def initialize(x:, y:, w: 120, h: 120, hp:, rate:, countdown:)
+		path = 'sprites/cave/props.png'
 		super(x: x, y: y, w: w, h: h, path: path, no_of_sprites: 0)
 		@hp = hp
 		@rate = rate
 		@countdown = countdown
-		@enemy_hp = enemy_hp
-		@enemy_power = enemy_power
-		@cumulative_power = ( enemy_power + enemy_hp + rate + hp )
+		@enemy_hp = (Enemy::MIN_HP..Enemy::MAX_HP).rnd
+		@enemy_power = (Enemy::MIN_POWER..Enemy::MAX_POWER).rnd
+		@enemy_speed = (Enemy::MIN_SPEED..Enemy::MAX_SPEED).rnd
+		@cumulative_power = ( @enemy_power + @enemy_hp + @rate + @hp + @enemy_speed )
 	end
-
 
 	def start_countdown
 		@countdown -= 1

@@ -1,13 +1,13 @@
 class Player < AnimatedSprite
 	attr_sprite
-	attr_accessor :attacked_at, :projectiles, :angle, :hp, :x, :y
-	def initialize(x: 640, y: 360, w: 56, h: 56)
-		path = 'sprites/heroes/Mage/Run/run1.png'
-		super(x: x, y: y, w: w, h: h, path: path, no_of_sprites: 8, start_looping_at: 1)
+	attr_accessor :attacked_at, :projectiles, :angle, :hp, :x, :y, :speed
+	def initialize(x: 640, y: 360, w: 50, h: 50)
+		path = 'sprites/heroes/tank.png'
+		super(x: x, y: y, w: w, h: h, path: path, angle: 0, no_of_sprites: 8, start_looping_at: 1)
 	    @attacked_at  = -1
-	    @angle        = 0
 	    @projectiles  = []
 	    @hp = 100
+	    @speed = 3
 	end
 
 	def animate tick_count

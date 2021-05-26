@@ -18,8 +18,8 @@ module Levels
   def generate_walls level, w, h
     walls = []
     (1..(level * 10)).each do |num|
-      rand_x = (MIN_DISTANCE_FROM_BORDER..MAX_DISTANCE_FROM_BORDER).to_a.sample
-      rand_y = (MIN_DISTANCE_FROM_BORDER..MAX_DISTANCE_FROM_BORDER).to_a.sample
+      rand_x = (MIN_DISTANCE_FROM_BORDER..MAX_DISTANCE_FROM_BORDER).rnd
+      rand_y = (MIN_DISTANCE_FROM_BORDER..MAX_DISTANCE_FROM_BORDER).rnd
       boundsX = w - rand_x
       boundsY = h - rand_y
       x = (0..boundsX).to_a.sample
@@ -35,11 +35,32 @@ module Levels
 
   def generate_spawn_locations level, w, h, walls
     spawn_locations = []
-    (1..level).each do |num|
-      new_spawn_location = SpawnLocation.new(x: rand(w), y: rand(h), rate: 220, countdown: 0, hp: 5)
-      rects = spawn_locations + walls.flatten
-      spawn_locations << new_spawn_location unless is_intersecting? rects, new_spawn_location
+    spawn_cumulative_power = 0
+    min_cumulative_power = level * 100
+    max_cumulative_power = level * 250
+    until spawn_cumulative_power.between?(min_cumulative_power, max_cumulative_power)
+      if spawn_cumulative_power > max_cumulative_power
+        spawn_locations.shift
+      else
+        new_spawn_location = SpawnLocation.new(x: rand(w), y: rand(h), rate: (SpawnLocation::MIN_RATE..SpawnLocation::MAX_RATE).rnd, countdown: (SpawnLocation::MIN_COUNTDOWN..SpawnLocation::MAX_COUNTDOWN).rnd, hp: (SpawnLocation::MIN_HEALTH..SpawnLocation::MAX_HEALTH).rnd)
+        rects = spawn_locations + walls.flatten
+        unless is_intersecting? rects, new_spawn_location
+          spawn_cumulative_power += new_spawn_location.cumulative_power
+          spawn_locations << new_spawn_location 
+        end
+      end
     end
+
+    # (1..level).each do |num|
+    #   new_spawn_location = SpawnLocation.new(x: rand(w), y: rand(h), rate: (SpawnLocation::MIN_RATE..SpawnLocation::MAX_RATE).rnd, countdown: (SpawnLocation::MIN_COUNTDOWN..SpawnLocation::MAX_COUNTDOWN).rnd, hp: (SpawnLocation::MIN_HEALTH..SpawnLocation::MAX_HEALTH).rnd)
+    #   rects = spawn_locations + walls.flatten
+    #   unless is_intersecting? rects, new_spawn_location
+    #     all_cumulative_power += new_spawn_location.cumulative_power
+    #     spawn_locations << new_spawn_location 
+    #   end
+    # end
+
+    $gtk.notify! "#{spawn_cumulative_power}"
     spawn_locations
   end
 

@@ -10,3 +10,10 @@ module CommonHelperMethods
 	# others.find { |o| (o != self) && (o.intersect_rect? self) }
  #  end
 end
+
+class Range
+  def rnd
+    a, b = self.begin, self.end
+    a + rand(b - a + 1)
+  end
+end
