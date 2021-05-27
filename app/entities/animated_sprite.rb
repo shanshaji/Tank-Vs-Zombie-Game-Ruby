@@ -10,17 +10,14 @@ class AnimatedSprite < Sprite
 
 
   def look_at target
-    if @x < (target.x + target.w)
-      @angle = 0
-      # @flip_horizontally = false
-    elsif @x > (target.x + target.w)
-      @angle = 180
-      # @flip_horizontally = true
-    end
-    if @y < (target.y + target.h)
+    if @y < target.y
       @angle = 90
-    elsif @y > (target.y + target.h)
+    elsif @y > target.y
       @angle = 270
+    elsif @x < target.x
+      @angle = 0
+    elsif @x > target.x
+      @angle = 180
     end
   end
 

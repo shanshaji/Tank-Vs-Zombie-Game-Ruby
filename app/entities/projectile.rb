@@ -8,7 +8,8 @@ class Projectile < AnimatedSprite
 		@at = tick_count
 		@parent_angle = angle
         @angle = angle - 90
-        @power = 2                 
+        @power = 2
+        @collission_time = nil                
 	end
 
 	def move
@@ -19,15 +20,24 @@ class Projectile < AnimatedSprite
 	end
 
 	def is_not_active?
-		@collided || @at.elapsed_time > 10000
+		(@collided && @collission_time.elapsed_time > 3) || @at.elapsed_time > 10000
 	end
 
 	def calc_projectile_collisions entities
 	    entities.each do |e|
 	      if !@collided && (intersect_rect? e)
+	      	explode_missile
 	      	@collided = true
+	      	@collission_time = $game.args.state.tick_count
 	      	e.attacked_by(self)
 	      end
     	end
 	end
+
+	private
+
+	def explode_missile
+		@path = "sprites/missile/Missile_3_Explosion_000.png"
+		@no_of_sprites = 8
+  	end
 end
