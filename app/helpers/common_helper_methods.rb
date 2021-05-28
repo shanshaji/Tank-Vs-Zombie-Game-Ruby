@@ -1,14 +1,17 @@
 module CommonHelperMethods
 
-  # def to_cell(ordinal_x, ordinal_y)
-  #   { x: ordinal_x * 16, y: ordinal_y * 16, w: 16, h: 16 }
-  # end
   def to_cell coordinate
   	coordinate * 16
   end
- #  def intersect_multiple_rect?(others)
-	# others.find { |o| (o != self) && (o.intersect_rect? self) }
- #  end
+ 
+  def render_screen x, y, text
+    # outputs.labels << { x: x, y: y.from_top, text: text }
+    outputs.background_color = [0, 0, 0]
+    outputs.labels << { x: x, y: y.from_top, text: text, size_enum: -1, alignment_enum: 1, r: 0, g: 0, b: 0,
+                           a: 150 }
+    outputs.labels << { x: x, y: y.from_top, text: text, size_enum: -1, alignment_enum: 1, r: 0, g: 200,
+                           b: 25 }
+  end
 end
 
 class Range

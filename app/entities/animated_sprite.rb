@@ -23,7 +23,7 @@ class AnimatedSprite < Sprite
 
 
   def running no_of_numbers = 3
-    @path = "#{absolute_file_name[0..-4] + sprite_index.to_s.rjust(no_of_numbers, "0")}.png"
+    @path = "#{absolute_file_name[0..-(no_of_numbers + 1)] + sprite_index.to_s.rjust(no_of_numbers, "0")}.png"
   end
 
 

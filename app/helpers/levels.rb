@@ -17,7 +17,8 @@ module Levels
 
   def generate_walls level, w, h
     walls = []
-    (1..(level * 10)).each do |num|
+    number_of_walls = (Wall::MIN..Wall::MAX).rnd
+    number_of_walls.each do |num|
       rand_x = (MIN_DISTANCE_FROM_BORDER..MAX_DISTANCE_FROM_BORDER).rnd
       rand_y = (MIN_DISTANCE_FROM_BORDER..MAX_DISTANCE_FROM_BORDER).rnd
       boundsX = w - rand_x
@@ -36,17 +37,19 @@ module Levels
   def generate_spawn_locations level, w, h, walls
     spawn_locations = []
     spawn_cumulative_power = 0
-    min_cumulative_power = level * 100
-    max_cumulative_power = level * 250
+    min_cumulative_power = level * 50
+    max_cumulative_power = level * 200
+    rects = walls.flatten
+
     until spawn_cumulative_power.between?(min_cumulative_power, max_cumulative_power)
       if spawn_cumulative_power > max_cumulative_power
         spawn_locations.shift
       else
         new_spawn_location = SpawnLocation.new(x: rand(w), y: rand(h), rate: (SpawnLocation::MIN_RATE..SpawnLocation::MAX_RATE).rnd, countdown: (SpawnLocation::MIN_COUNTDOWN..SpawnLocation::MAX_COUNTDOWN).rnd, hp: (SpawnLocation::MIN_HEALTH..SpawnLocation::MAX_HEALTH).rnd)
-        rects = spawn_locations + walls.flatten
         unless is_intersecting? rects, new_spawn_location
           spawn_cumulative_power += new_spawn_location.cumulative_power
           spawn_locations << new_spawn_location 
+          rects += [new_spawn_location]
         end
       end
     end
@@ -59,8 +62,6 @@ module Levels
     #     spawn_locations << new_spawn_location 
     #   end
     # end
-
-    $gtk.notify! "#{spawn_cumulative_power}"
     spawn_locations
   end
 

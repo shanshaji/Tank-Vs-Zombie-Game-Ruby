@@ -1,14 +1,13 @@
 class Projectile < AnimatedSprite
 	attr_sprite
 	attr_accessor :at, :angle, :collided, :power
-	def initialize(tick_count:, angle:, x:, y:, w: 15, h: 60)
-		path = 'sprites/missile/Missile_3_Flying_000.png'
+	def initialize(tick_count:, angle:, x:, y:, w: 15, h: 60, path: 'sprites/missile/Missile_3_Flying_000.png', power: 2)
 		super(x: x + 20, y: y, w: w, h: h, path: path, no_of_sprites: 9)
 		@collided = false
 		@at = tick_count
 		@parent_angle = angle
         @angle = angle - 90
-        @power = 2
+        @power = power
         @collission_time = nil                
 	end
 
@@ -37,7 +36,10 @@ class Projectile < AnimatedSprite
 	private
 
 	def explode_missile
-		@path = "sprites/missile/Missile_3_Explosion_000.png"
+		file_name_parts = absolute_file_name.split("_")
+		file_name_parts[2] = "Explosion"
+		new_file_name = file_name_parts.join("_")
+		@path = "#{new_file_name}.png"
 		@no_of_sprites = 8
   	end
 end

@@ -1,12 +1,12 @@
 class Enemy < AnimatedSprite
 	attr_sprite
 
-	MIN_POWER = 0.5
-	MAX_POWER = 5
-	MIN_HP = 2
-	MAX_HP = 12
-	MIN_SPEED = 0.5
-	MAX_SPEED = 2
+	MIN_POWER ||= 0.5
+	MAX_POWER ||= 5
+	MIN_HP ||= 2
+	MAX_HP ||= 10
+	MIN_SPEED ||= 0.5
+	MAX_SPEED ||= 2
 
 	def initialize(x:, y:, hp: 2, w: 30, h: 30, power: 0.5, speed: 1, path: 'sprites/enemy/zombie/zombie_000.png')
 		super(x: x, y: y, w: w, h: h, no_of_sprites: 5, path: path)

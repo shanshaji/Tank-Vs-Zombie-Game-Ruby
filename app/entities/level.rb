@@ -47,6 +47,12 @@ class Level
 	    end
   	end
 
+    def animate_walls
+      @@walls.each do |wall|
+        wall.animate
+      end
+    end
+
   	def delete_spawns_walls_enemies_if_hit
   		@@enemies.delete_if { |enemy|  enemy.dead? }
     	@@spawn_locations.delete_if{ |spawn_location| spawn_location.destroyed? }
