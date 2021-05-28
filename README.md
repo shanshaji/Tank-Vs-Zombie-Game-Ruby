@@ -24,4 +24,4 @@ This Game requires DragonRuby Game toolkit to work. You can get this at https://
 
 ## License
 
-© Copyright 2021 Shan Shaji. All rights reserved.All rights reserved.
+© Copyright 2021 Shan Shaji. All rights reserved.
