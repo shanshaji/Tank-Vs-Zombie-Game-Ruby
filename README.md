@@ -18,3 +18,10 @@ This Game requires DragonRuby Game toolkit to work. You can get this at https://
 ## Features
 
 - Auto Generating Levels
+
+
+
+
+## License
+
+© Copyright 2021 Shan Shaji. All rights reserved.All rights reserved.
