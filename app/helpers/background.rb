@@ -1,7 +1,6 @@
 def render_background
   outputs.solids << { x: 0, y: 0, w: 1280, h: 720, r: 132, g: 222, b: 2, a: 200 }
   unless @background_rendered
-    $gtk.notify! "called"
     outputs[:background_tiles].w = @width
     outputs[:background_tiles].h = @height
     outputs[:background_tiles].solids << 100.map do 

@@ -43,3 +43,5 @@ class Projectile < AnimatedSprite
 		@no_of_sprites = 8
   	end
 end
+
+

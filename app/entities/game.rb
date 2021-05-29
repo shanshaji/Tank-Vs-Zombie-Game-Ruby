@@ -2,6 +2,13 @@ class Game
   attr_gtk
   include CommonHelperMethods
   attr_reader :player, :camera
+
+  class << self
+    def restart
+      $gtk.reset
+      $game = new
+    end
+  end
   def initialize
     @width = (100 * 16)
     @height = (100 * 16)
@@ -126,7 +133,7 @@ class Game
       render_screen(500, 340, "Game Over")
       render_screen(600, 360, "Press Enter to Restart")
       if inputs.keyboard.key_down.enter
-        $gtk.reset
+        Game.restart
       end
     end
   end
