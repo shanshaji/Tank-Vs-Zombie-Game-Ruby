@@ -27,7 +27,7 @@ module Levels
       y = (0..boundsY).to_a.sample
       new_wall = Wall.new(x: x, y: y, w: 50, h: 50)
 
-      if !is_intersecting? walls, new_wall
+      if !intersecting? walls, new_wall
         walls << new_wall 
       end
     end
@@ -38,41 +38,17 @@ module Levels
     spawn_locations = []
     spawn_cumulative_power = 0
     min_cumulative_power = level * 50
-    max_cumulative_power = level * 200
     rects = walls.flatten
 
-    min_spawns = level * ((1..2).rnd)
-    max_spawns = level * ((2..4).rnd)
-    (min_spawns..max_spawns).each do |num|
+    until spawn_cumulative_power >= min_cumulative_power && spawn_cumulative_power > current_level_cumulative_power
       new_spawn_location = SpawnLocation.new(x: rand(w), y: rand(h), rate: (SpawnLocation::MIN_RATE..SpawnLocation::MAX_RATE).rnd, countdown: (SpawnLocation::MIN_COUNTDOWN..SpawnLocation::MAX_COUNTDOWN).rnd, hp: (SpawnLocation::MIN_HEALTH..SpawnLocation::MAX_HEALTH).rnd)
-      unless is_intersecting? rects, new_spawn_location
+      unless intersecting? rects, new_spawn_location
         spawn_cumulative_power += new_spawn_location.cumulative_power
         spawn_locations << new_spawn_location 
         rects += [new_spawn_location]
       end
     end
-
-    # until spawn_cumulative_power.between?(min_cumulative_power, max_cumulative_power)
-    #   if spawn_cumulative_power > max_cumulative_power
-    #     spawn_locations.shift
-    #   else
-    #     new_spawn_location = SpawnLocation.new(x: rand(w), y: rand(h), rate: (SpawnLocation::MIN_RATE..SpawnLocation::MAX_RATE).rnd, countdown: (SpawnLocation::MIN_COUNTDOWN..SpawnLocation::MAX_COUNTDOWN).rnd, hp: (SpawnLocation::MIN_HEALTH..SpawnLocation::MAX_HEALTH).rnd)
-    #     unless is_intersecting? rects, new_spawn_location
-    #       spawn_cumulative_power += new_spawn_location.cumulative_power
-    #       spawn_locations << new_spawn_location 
-    #       rects += [new_spawn_location]
-    #     end
-    #   end
-    # end
-
-    # (1..level).each do |num|
-    #   new_spawn_location = SpawnLocation.new(x: rand(w), y: rand(h), rate: (SpawnLocation::MIN_RATE..SpawnLocation::MAX_RATE).rnd, countdown: (SpawnLocation::MIN_COUNTDOWN..SpawnLocation::MAX_COUNTDOWN).rnd, hp: (SpawnLocation::MIN_HEALTH..SpawnLocation::MAX_HEALTH).rnd)
-    #   rects = spawn_locations + walls.flatten
-    #   unless is_intersecting? rects, new_spawn_location
-    #     all_cumulative_power += new_spawn_location.cumulative_power
-    #     spawn_locations << new_spawn_location 
-    #   end
-    # end
+    current_level_cumulative_power = spawn_cumulative_power
     spawn_locations
   end
 
@@ -85,7 +61,7 @@ module Levels
     ]
   end
 
-  def is_intersecting? rects, new_rect
+  def intersecting? rects, new_rect
     rects.find do |rect|
       rect.intersect_rect?(new_rect)
     end

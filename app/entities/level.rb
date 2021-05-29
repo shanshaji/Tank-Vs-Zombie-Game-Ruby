@@ -5,8 +5,8 @@ class Level
 	@@walls = []
 	@@enemies = []
 	@@spawn_locations = []
+  @@current_level_cumulative_power = 1
   class << self
-
   	def + num
   		@@level += num 
   	end
@@ -26,6 +26,14 @@ class Level
   	def spawn_locations
   		@@spawn_locations
   	end
+
+    def current_level_cumulative_power
+      @@current_level_cumulative_power
+    end
+
+    def current_level_cumulative_power=(power)
+      @@current_level_cumulative_power = power
+    end
 
   	def activate_spawn_locations
   		@@spawn_locations.each(&:start_countdown)
