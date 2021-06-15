@@ -33,6 +33,7 @@ class Game
   end
 
   def render 
+    outputs.sounds << "sounds/bgm/forest2.ogg"
     unless @game_over
       camera.camera_position(@player)
       outputs[:camera].w = camera.w
