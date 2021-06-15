@@ -2,19 +2,6 @@ module Levels
   include CommonHelperMethods
  private
 
-  (1..100).each do |level|
-    define_method "level_#{level}_template" do |*args|
-      w, h = args
-      walls = []
-      spawn_locations = []
-      walls << add_borders(w,h)
-      walls << generate_walls(level, w, h)
-      spawn_locations << generate_spawn_locations(level, w, h, walls)
-      @@walls = walls.flatten
-      @@spawn_locations = spawn_locations.flatten
-    end
-  end
-
   def generate_walls level, w, h
     walls = []
     number_of_walls = (Wall::MIN..Wall::MAX).rnd

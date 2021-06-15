@@ -12,7 +12,7 @@ class Game
   def initialize
     @width = (100 * 16)
     @height = (100 * 16)
-    Level.create_level(w: @width, h: @height)
+    generate_level
     @player = Player.new
     @special_powers = []
     @camera = Camera.new(w:@width, h: @height)
@@ -92,8 +92,7 @@ class Game
     if Level.completed?
       outputs.labels << { x: 250, y: 290, text: "Press Enter to continue to Level: #{Level.level + 1}" }
       if inputs.keyboard.key_down.enter
-        Level + 1
-        create_level
+        generate_level
         @sprites_to_render = [Level.spawn_locations, player.projectiles, player, Level.enemies, Level.walls]
       end
     end
@@ -138,7 +137,8 @@ class Game
     end
   end
 
-  def create_level
+  def generate_level
+    Level + 1
     Level.create_level(w: @width, h: @height)    
   end
 end

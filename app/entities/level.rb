@@ -1,14 +1,30 @@
 class Level
 	extend CommonHelperMethods
 	extend Levels
-	@@level = 1
+	@@level = 0
 	@@walls = []
 	@@enemies = []
 	@@spawn_locations = []
   @@current_level_cumulative_power = 1
+  @@level_generator = Proc.new do
+    class << self
+      define_method "level_#{@@level}_template" do |*args|
+        w, h = args
+        # $gtk.notify!("Created #{@@level}")
+        walls = []
+        spawn_locations = []
+        walls << add_borders(w,h)
+        walls << generate_walls(@@level, w, h)
+        spawn_locations << generate_spawn_locations(@@level, w, h, walls)
+        @@walls = walls.flatten
+        @@spawn_locations = spawn_locations.flatten
+      end
+    end
+  end
   class << self
   	def + num
   		@@level += num 
+      @@level_generator.call
   	end
 
   	def level
@@ -69,11 +85,11 @@ class Level
 
   	def create_level(w:, h:)
   		level_template = send("level_#{@@level}_template", w, h)
-	end
+	   end
 
-	def completed?
-		@@enemies.empty? && @@spawn_locations.empty?
-	end
+  	def completed?
+  		@@enemies.empty? && @@spawn_locations.empty?
+  	end
   end
 
 	def method_missing(m, *args)
